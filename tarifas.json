@@ -1,0 +1,24 @@
+{
+  "ate": {"tipo":"courier","costo":"25.90"},
+  "surquillo": {"tipo":"courier","costo":"25.90"},
+  "miraflores": {"tipo":"courier","costo":"25.90"},
+  "san borja": {"tipo":"courier","costo":"25.90"},
+  "santiago de surco": {"tipo":"courier","costo":"25.90"},
+  "chorrillos": {"tipo":"courier","costo":"25.90"},
+
+  "comas": {"tipo":"courier","costo":"35.90"},
+  "san juan de lurigancho": {"tipo":"courier","costo":"35.90"},
+  "villa el salvador": {"tipo":"courier","costo":"35.90"},
+  "villa maria del triunfo": {"tipo":"courier","costo":"35.90"},
+
+  "ancon": {"tipo":"olva"},
+  "pachacamac": {"tipo":"olva"},
+  "cieneguilla": {"tipo":"olva"},
+  "lurin": {"tipo":"olva"},
+  "pucusana": {"tipo":"olva"},
+  "punta hermosa": {"tipo":"olva"},
+  "punta negra": {"tipo":"olva"},
+  "san bartolo": {"tipo":"olva"},
+  "santa maria del mar": {"tipo":"olva"},
+  "santa rosa": {"tipo":"olva"}
+}
