@@ -184,7 +184,7 @@ document.getElementById("resultado").innerHTML =
 try{
 
 const url =
-`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(direccion + ', Perú')}`;
+`https://nominatim.openstreetmap.org/search?format=json&limit=10&q=${encodeURIComponent(direccion + ', Lima, Perú')}`;
 
 const respuesta = await fetch(url);
 
