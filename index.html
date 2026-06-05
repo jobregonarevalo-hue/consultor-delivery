@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultor Delivery</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    max-width:800px;
+    margin:auto;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    font-size:16px;
+}
+
+button{
+    margin-top:10px;
+    padding:12px 20px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+#resultado{
+    margin-top:20px;
+    padding:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th,td{
+    border:1px solid #ccc;
+    padding:8px;
+}
+</style>
+</head>
+<body>
+
+<h1>Consultor Delivery</h1>
+
+<input id="direccion" placeholder="Ingrese dirección o zona">
+
+<button onclick="consultar()">Consultar</button>
+
+<div id="resultado"></div>
+
+<h2>Historial</h2>
+
+<table id="historial">
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Dirección</th>
+<th>Distrito</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<script>
+
+const tarifas = {
+    "ate":"25.90",
+    "surquillo":"25.90",
+    "miraflores":"25.90",
+    "san borja":"25.90",
+    "santiago de surco":"25.90",
+    "chorrillos":"25.90",
+
+    "comas":"35.90",
+    "san juan de lurigancho":"35.90",
+
+    "pachacamac":"OLVA",
+    "ancón":"OLVA",
+    "ancon":"OLVA"
+};
+
+async function consultar(){
+
+    const direccion =
+        document.getElementById("direccion").value;
+
+    const url =
+`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(direccion + ', Lima, Perú')}`;
+
+    const res = await fetch(url);
+
+    const data = await res.json();
+
+    if(data.length===0){
+        document.getElementById("resultado").innerHTML =
+        "No se encontró la dirección";
+        return;
+    }
+
+    const nombre =
+        data[0].display_name.toLowerCase();
+
+    let distritoEncontrado = null;
+
+    Object.keys(tarifas).forEach(distrito=>{
+        if(nombre.includes(distrito)){
+            distritoEncontrado = distrito;
+        }
+    });
+
+    if(!distritoEncontrado){
+        document.getElementById("resultado").innerHTML =
+        "No se pudo determinar el distrito";
+        return;
+    }
+
+    const tarifa =
+        tarifas[distritoEncontrado];
+
+    let mensaje = "";
+
+    if(tarifa==="OLVA"){
+        mensaje =
+        `Distrito: ${distritoEncontrado}<br>
+         Atención mediante Olva o Shalom`;
+    }else{
+        mensaje =
+        `Distrito: ${distritoEncontrado}<br>
+         Costo: S/${tarifa}`;
+    }
+
+    document.getElementById("resultado").innerHTML =
+        mensaje;
+
+}
+
+</script>
+
+</body>
+</html>
