@@ -1,9 +1,255 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="es">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Consultor Delivery</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    font-size:16px;
+    box-sizing:border-box;
+}
+
+button{
+    margin-top:10px;
+    padding:12px 20px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+#resultado{
+    margin-top:20px;
+    padding:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    background:#f7f7f7;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th, td{
+    border:1px solid #ccc;
+    padding:8px;
+    text-align:left;
+}
+
+th{
+    background:#efefef;
+}
+</style>
+
 </head>
+
 <body>
-<h1>Consultor Delivery funcionando</h1>
+
+<h1>Consultor Delivery</h1>
+
+<p>Pegue la dirección o zona enviada por el cliente:</p>
+
+<input id="direccion" placeholder="Ejemplo: Calle Paderewski 211">
+
+<button onclick="consultar()">Consultar</button>
+
+<div id="resultado"></div>
+
+<h2>Historial</h2>
+
+<table>
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Consulta</th>
+<th>Distrito</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody id="historial"></tbody>
+</table>
+
+<script>
+
+const tarifas = {
+"ate":"25.90",
+"barranco":"25.90",
+"breña":"25.90",
+"chorrillos":"25.90",
+"el agustino":"25.90",
+"independencia":"25.90",
+"jesús maría":"25.90",
+"la molina":"25.90",
+"la victoria":"25.90",
+"lima":"25.90",
+"lince":"25.90",
+"los olivos":"25.90",
+"magdalena":"25.90",
+"miraflores":"25.90",
+"pueblo libre":"25.90",
+"rímac":"25.90",
+"san borja":"25.90",
+"san isidro":"25.90",
+"san juan de miraflores":"25.90",
+"san luis":"25.90",
+"san martín de porres":"25.90",
+"san miguel":"25.90",
+"santa anita":"25.90",
+"santiago de surco":"25.90",
+"surquillo":"25.90",
+
+"bellavista":"35.90",
+"callao":"35.90",
+"carmen de la legua":"35.90",
+"comas":"35.90",
+"la perla":"35.90",
+"la punta":"35.90",
+"san juan de lurigancho":"35.90",
+"villa el salvador":"35.90",
+"villa maría del triunfo":"35.90"
+};
+
+function guardarHistorial(fecha, consulta, distrito, resultado){
+
+let historial =
+JSON.parse(localStorage.getItem("historialDelivery") || "[]");
+
+historial.unshift({
+fecha,
+consulta,
+distrito,
+resultado
+});
+
+localStorage.setItem(
+"historialDelivery",
+JSON.stringify(historial)
+);
+
+mostrarHistorial();
+}
+
+function mostrarHistorial(){
+
+let historial =
+JSON.parse(localStorage.getItem("historialDelivery") || "[]");
+
+let html = "";
+
+historial.forEach(item=>{
+
+html += `
+<tr>
+<td>${item.fecha}</td>
+<td>${item.consulta}</td>
+<td>${item.distrito}</td>
+<td>${item.resultado}</td>
+</tr>
+`;
+
+});
+
+document.getElementById("historial").innerHTML = html;
+}
+
+async function consultar(){
+
+const direccion =
+document.getElementById("direccion").value.trim();
+
+if(!direccion){
+alert("Ingrese una dirección");
+return;
+}
+
+document.getElementById("resultado").innerHTML =
+"Buscando...";
+
+try{
+
+const url =
+`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(direccion + ', Perú')}`;
+
+const respuesta = await fetch(url);
+
+const datos = await respuesta.json();
+
+if(datos.length===0){
+
+document.getElementById("resultado").innerHTML =
+"No se encontró la dirección.";
+
+return;
+}
+
+const texto =
+datos[0].display_name.toLowerCase();
+
+let distrito = null;
+
+Object.keys(tarifas).forEach(nombre=>{
+
+if(texto.includes(nombre)){
+distrito = nombre;
+}
+
+});
+
+let resultado = "";
+
+if(distrito){
+
+resultado =
+`Distrito detectado: <b>${distrito}</b><br>
+Costo Delivery: <b>S/${tarifas[distrito]}</b>`;
+
+}else{
+
+resultado =
+`Distrito no incluido en tarifario.<br>
+Atención mediante <b>Olva o Shalom</b>.`;
+
+distrito = "No identificado";
+}
+
+document.getElementById("resultado").innerHTML =
+resultado;
+
+guardarHistorial(
+new Date().toLocaleString(),
+direccion,
+distrito,
+resultado.replace(/<[^>]*>/g,'')
+);
+
+}catch(error){
+
+document.getElementById("resultado").innerHTML =
+"Error al consultar la dirección.";
+
+}
+
+}
+
+mostrarHistorial();
+
+</script>
+
 </body>
 </html>
