@@ -189,6 +189,13 @@ const url =
 const respuesta = await fetch(url);
 
 const datos = await respuesta.json();
+    console.log("RESULTADOS NOMINATIM");
+console.log(datos);
+
+document.getElementById("resultado").innerHTML =
+"<pre>" + JSON.stringify(datos, null, 2) + "</pre>";
+
+return;
 
 if(datos.length===0){
 
